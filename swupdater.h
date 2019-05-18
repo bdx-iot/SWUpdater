@@ -26,7 +26,7 @@ public Q_SLOTS:
     void onUpload();
     void onMessage(const QString &message);
     void onUpdateFinished();
-    void onUploadFinished(QNetworkReply *reply);
+    void onUploadFinished();
     void onUploadProgress(qint64 bytesSent, qint64 bytesTotal);
 
 private:

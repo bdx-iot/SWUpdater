@@ -66,20 +66,20 @@ void SWUpdater::onUpload()
     QNetworkReply *reply = m_manager->post(url, multiPart);
 
     multiPart->setParent(reply);
-    connect(reply, SIGNAL(finished()), this, SLOT(onUploadFinished()));
-    connect(reply, SIGNAL(uploadProgress(qint64, qint64)), this, SLOT(onUploadProgress(qint64, qint64)));
+    connect(reply, &QNetworkReply::finished, this, &SWUpdater::onUploadFinished);
+    connect(reply, &QNetworkReply::uploadProgress, this, &SWUpdater::onUploadProgress);
 }
 
 void SWUpdater::onMessage(const QString &message)
 {
-    QJsonParseError error;
+    QJsonParseError str_error;
     QString webMessage;
-    QJsonDocument jsonMessage = QJsonDocument::fromJson(message.toUtf8(), &error);
+    QJsonDocument jsonMessage = QJsonDocument::fromJson(message.toUtf8(), &str_error);
 
     // Parse json
-    if (error.error) {
+    if (str_error.error) {
         qWarning() << "Failed to parse text message as JSON object:" << message
-                   << "Error is:" << error.errorString();
+                   << "Error is:" << str_error.errorString();
         return;
     } else if (!jsonMessage.isObject()) {
         qWarning() << "Received JSON message that is not an object: " << message;
@@ -111,11 +111,9 @@ void SWUpdater::onUpdateFinished()
     m_webSocket.close();
 }
 
-void SWUpdater::onUploadFinished(QNetworkReply *reply)
+void SWUpdater::onUploadFinished()
 {
-    Q_UNUSED(reply);
     qDebug () << "Software image uploaded successfully. Wait for installation to be finished";
-
 }
 
 void SWUpdater::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
