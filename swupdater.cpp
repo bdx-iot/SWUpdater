@@ -81,12 +81,12 @@ void SWUpdater::onUpload()
     QNetworkReply *reply = m_manager->post(url, multiPart);
 
     multiPart->setParent(reply);
-    connect(reply, &QNetworkReply::finished, this, &SWUpdater::onUploadFinished);
     connect(reply, &QNetworkReply::uploadProgress, this, &SWUpdater::onUploadProgress);
 }
 
 void SWUpdater::onMessage(const QString &message)
 {
+    qint32 rc;
     QJsonParseError str_error;
     QString webMessage;
     QJsonDocument jsonMessage = QJsonDocument::fromJson(message.toUtf8(), &str_error);
@@ -103,9 +103,10 @@ void SWUpdater::onMessage(const QString &message)
 
     // Get json object
     QJsonObject json = jsonMessage.object();
-    if(json.contains("type") && json["type"].isString()){
+    if(json.contains("type") && json["type"].isString()) {
         webMessage = json["type"].toString();
-        if (webMessage != "message") {
+        rc = webMessage.compare("message");
+        if (rc < 0) {
             // TODO
         }
 
@@ -115,8 +116,14 @@ void SWUpdater::onMessage(const QString &message)
         webMessage = json["text"].toString();
         qDebug() << webMessage;
 
-        if(webMessage == "SWUPDATE successful !")
-            Q_EMIT updateFinished();
+        // Test string
+        rc = webMessage.compare(STRING_SUCCESS, Qt::CaseInsensitive);
+        if (rc < 0) {
+            qDebug() << webMessage;
+        } else {
+            Q_EMIT onUpdateFinished();
+        }
+
     }
 }
 
@@ -130,15 +137,16 @@ void SWUpdater::onUpdateFinished()
 void SWUpdater::onUploadFinished()
 {
     qDebug () << "Software image uploaded successfully. Wait for installation to be finished";
-    if(m_file->isOpen())
+    if(m_file->isOpen()) {
         qDebug() << "close file";
         m_file->close();
+    }
 }
 
 void SWUpdater::onUploadProgress(qint64 bytesSent, qint64 bytesTotal)
 {
     double downloadProgress = static_cast<double>(bytesSent)/static_cast<double>(bytesTotal);
-    qDebug() << "Uploading " << bytesSent  << "/" << bytesTotal << "%" << downloadProgress*100.0;
+    qDebug() << "Uploading " << bytesSent  << "/" << bytesTotal << " - " << downloadProgress * 100.0 << "%";
 }
 
 QString SWUpdater::extractImageName(QString &path)
