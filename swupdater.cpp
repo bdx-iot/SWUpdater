@@ -17,7 +17,15 @@ SWUpdater::SWUpdater()
 
 SWUpdater::~SWUpdater()
 {
+    if (!m_file) {
+        delete m_file;
+        m_file = nullptr;
+    }
 
+    if (!m_manager) {
+        delete m_manager;
+        m_manager = nullptr;
+    }
 }
 
 void SWUpdater::onConnected()
