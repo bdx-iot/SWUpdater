@@ -16,6 +16,7 @@ Item {
         nameFilters: [ "SWUpdate Image (*.swu)"]
         selectedNameFilter: "SWUpdate Image (*.swu)"
         sidebarVisible: true
+        onAccepted:  swupdater.qFile = fileUrl
     }
 
     ScrollView {
@@ -57,7 +58,7 @@ Item {
 
     ProgressBar {
         indeterminate: true
-        visible: true
+        visible: false
         anchors {
             centerIn: parent.Center
         }
@@ -92,7 +93,7 @@ Item {
                 id: btnvalid
                 text: "Valider"
                 onClicked: {
-                    //swupdater.qUrl = fileDialog.url
+                    swupdater.qUrl = tfPort.text
                 }
             }
         }
