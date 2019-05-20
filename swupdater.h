@@ -7,6 +7,8 @@
 #include <QtWebSockets/QWebSocket>
 #include <QFile>
 
+#define STRING_SUCCESS "SWUPDATE successful !"
+
 class SWUpdater : public QObject
 {
     Q_OBJECT
@@ -14,6 +16,9 @@ class SWUpdater : public QObject
     Q_PROPERTY(QString qFile MEMBER m_pathImage)
 public:
     explicit SWUpdater();
+    /// destructor
+    virtual~SWUpdater();
+
 
 Q_SIGNALS:
     void onDisconnected();

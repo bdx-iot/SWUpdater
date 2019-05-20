@@ -15,6 +15,11 @@ SWUpdater::SWUpdater()
     connect(this, &SWUpdater::updateFinished, this, &SWUpdater::onUpdateFinished);
 }
 
+SWUpdater::~SWUpdater()
+{
+
+}
+
 void SWUpdater::onConnected()
 {
     m_connected = true;
